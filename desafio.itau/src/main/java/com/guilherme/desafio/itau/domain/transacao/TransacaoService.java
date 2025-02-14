@@ -37,4 +37,12 @@ public class TransacaoService {
             throw new RegraDeNegocioException("A transação deve acontecer no passado");
 
     }
+
+    public List<Transacao> listarTransacoes(){
+        return new ArrayList<>(transacoes);
+    }
+
+    public void limparTransacoes(){
+        transacoes.clear();
+    }
 }
