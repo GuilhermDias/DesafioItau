@@ -20,9 +20,9 @@ public class TransacaoController {
     private final TransacaoService service;
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Transacao> realizaTransacao(@RequestBody RequestTransacao dto){
-        Transacao transacao = service.validaTransacao(dto);
+    public ResponseEntity<Transacao> receberTransacoes(@RequestBody RequestTransacao dto){
+        service.validaTransacao(dto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(transacao);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 }
