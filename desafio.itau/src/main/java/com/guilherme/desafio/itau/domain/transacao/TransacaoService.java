@@ -1,11 +1,14 @@
 package com.guilherme.desafio.itau.domain.transacao;
 
 import com.guilherme.desafio.itau.RegraDeNegocioException;
+import com.guilherme.desafio.itau.domain.estatisticas.RequestEstatisticas;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +47,23 @@ public class TransacaoService {
 
     public void limparTransacoes(){
         transacoes.clear();
+    }
+
+    public RequestEstatisticas solicitaEstatistica(OffsetDateTime ulti60seg) {
+
+        if(transacoes.isEmpty())
+            throw new RegraDeNegocioException("Transações indisponiveis");
+
+        List<Transacao> transacaosRecentes = transacoes.stream()
+                .filter(t -> t.getDataHora().isAfter(ulti60seg))
+                .collect(Collectors.toList());
+
+        DoubleSummaryStatistics estatisticas = transacaosRecentes.stream()
+                .mapToDouble(Transacao::getValor)
+                .summaryStatistics();
+
+        return new RequestEstatisticas(estatisticas.getCount(), estatisticas.getSum(),
+                estatisticas.getAverage(), estatisticas.getMin(), estatisticas.getMax());
+
     }
 }
